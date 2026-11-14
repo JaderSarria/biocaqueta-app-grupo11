@@ -1,0 +1,2 @@
+{{#if exito}}<div class="aviso exito" role="status"><span aria-hidden="true">✓</span> {{exito}}</div>{{/if}}
+{{#if error}}<div class="aviso error" role="alert"><strong>{{error}}</strong>{{#if detalles}}<ul>{{#each detalles}}<li>{{this}}</li>{{/each}}</ul>{{/if}}</div>{{/if}}

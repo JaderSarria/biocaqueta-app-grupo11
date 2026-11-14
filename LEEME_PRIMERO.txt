@@ -1,0 +1,19 @@
+BIOCAQUETA 2 - DISENO, MAPA, FOTOS Y SOLICITUDES
+
+1. Entra a biocaqueta-app y abre una terminal.
+2. Ejecuta: npm install
+3. Para probar: npm run demo
+4. Abre http://localhost:3000
+
+Si ya usabas Atlas, copia tu archivo .env de la version anterior y ejecuta npm start.
+
+NOVEDADES:
+- Portada amazonica, animaciones y tarjetas.
+- Tres pestanas: especie, lugar y fotografia.
+- Marca el mapa o busca el lugar y ajusta el punto.
+- Puedes adjuntar, cambiar o quitar una foto.
+- Abre Solicitudes con el boton lateral para ver la actividad de la API.
+- Cambia entre tarjetas y mapa general.
+
+El modo demo es temporal. Mapas y busqueda de lugares necesitan Internet.
+Mas instrucciones en README.md.

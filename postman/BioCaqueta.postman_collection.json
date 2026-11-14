@@ -1,0 +1,421 @@
+{
+  "info": {
+    "name": "BioCaquetá · Taller Backend",
+    "description": "Ejecutar en orden. Crea un registro de prueba, guarda su ID, verifica GET, filtro, PUT y DELETE, y valida errores. Solo elimina el registro creado por esta colección. Para dejar un documento visible en Atlas, ejecutar nuevamente solo 01 y 02. El servidor debe estar conectado a MongoDB Atlas para demostrar RF-01.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 · Crear avistamiento",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/avistamientos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "avistamientos"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombreComun\": \"Guacamaya bandera · Prueba Postman\",\n  \"nombreCientifico\": \"Ara macao\",\n  \"categoria\": \"Ave\",\n  \"zona\": \"Río Hacha\",\n  \"investigador\": \"Prueba académica Postman\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "const creado = pm.response.json();",
+              "pm.test('Tiene ID de MongoDB', () => pm.expect(creado._id).to.match(/^[a-f0-9]{24}$/));",
+              "pm.test('Aplica estado por defecto', () => pm.expect(creado.estadoConservacion).to.eql('Preocupación menor'));",
+              "pm.test('Aplica fecha por defecto', () => pm.expect(Number.isNaN(Date.parse(creado.fechaRegistro))).to.eql(false));",
+              "if (pm.response.code === 201 && creado._id) pm.environment.set(\"avistamientoId\", creado._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 · Listar avistamientos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/avistamientos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "avistamientos"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const registros = pm.response.json();",
+              "pm.test('Devuelve un arreglo', () => pm.expect(registros).to.be.an('array'));",
+              "pm.test('Incluye el registro creado', () => pm.expect(registros.some(r => r._id === pm.environment.get('avistamientoId'))).to.eql(true));",
+              "pm.test('Orden descendente por fecha', () => { for (let i = 1; i < registros.length; i++) pm.expect(Date.parse(registros[i - 1].fechaRegistro)).to.be.at.least(Date.parse(registros[i].fechaRegistro)); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 · Filtrar por categoría",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/avistamientos?categoria=Ave",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "avistamientos"
+          ],
+          "query": [
+            {
+              "key": "categoria",
+              "value": "Ave"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const registros = pm.response.json();",
+              "pm.test('Solo aves', () => pm.expect(registros.every(r => r.categoria === 'Ave')).to.eql(true));",
+              "pm.test('Incluye el ave de prueba', () => pm.expect(registros.some(r => r._id === pm.environment.get('avistamientoId'))).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 · Actualizar zona y estado",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/avistamientos/{{avistamientoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "avistamientos",
+            "{{avistamientoId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"zona\": \"Reserva natural El Caraño\",\n  \"estadoConservacion\": \"Vulnerable\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Actualiza la zona', () => pm.expect(pm.response.json().zona).to.eql('Reserva natural El Caraño'));",
+              "pm.test('Actualiza el estado', () => pm.expect(pm.response.json().estadoConservacion).to.eql('Vulnerable'));",
+              "pm.test('Conserva el ID', () => pm.expect(pm.response.json()._id).to.eql(pm.environment.get('avistamientoId')));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 · Verificar persistencia del cambio",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/avistamientos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "avistamientos"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const registro = pm.response.json().find(r => r._id === pm.environment.get('avistamientoId'));",
+              "pm.test('El cambio permanece al consultar', () => { pm.expect(registro).to.be.an('object'); pm.expect(registro.estadoConservacion).to.eql('Vulnerable'); pm.expect(registro.zona).to.eql('Reserva natural El Caraño'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 · Rechazar datos incompletos",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/avistamientos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "avistamientos"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombreComun\": \"Registro incompleto\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('Devuelve error y detalles', () => { pm.expect(pm.response.json()).to.have.property('error'); pm.expect(pm.response.json().detalles).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 · Rechazar estado fuera del enum",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/avistamientos/{{avistamientoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "avistamientos",
+            "{{avistamientoId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"estadoConservacion\": \"Extinto\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('Devuelve error', () => pm.expect(pm.response.json()).to.have.property('error'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 · Rechazar identificador inválido",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/avistamientos/id-invalido",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "avistamientos",
+            "id-invalido"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 · Eliminar solo el registro de prueba",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/avistamientos/{{avistamientoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "avistamientos",
+            "{{avistamientoId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Confirma el ID eliminado', () => pm.expect(pm.response.json().id).to.eql(pm.environment.get('avistamientoId')));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 · Verificar eliminación persistida",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/avistamientos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "avistamientos"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Ya no existe en el listado', () => pm.expect(pm.response.json().some(r => r._id === pm.environment.get('avistamientoId'))).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 · Registro eliminado devuelve 404",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/avistamientos/{{avistamientoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "avistamientos",
+            "{{avistamientoId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"zona\": \"Río Hacha\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', () => pm.response.to.have.status(404));",
+              "pm.test('Devuelve error', () => pm.expect(pm.response.json()).to.have.property('error'));",
+              "if (pm.response.code === 404) pm.environment.unset(\"avistamientoId\");"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

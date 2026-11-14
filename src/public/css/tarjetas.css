@@ -1,0 +1,203 @@
+/* ==========================================================================
+   BioCaquetá · Nuevo diseño de tarjetas del cuaderno de campo
+   ========================================================================== */
+
+@property --giro { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+
+.tarjetas { counter-reset: registro; gap: 28px; }
+
+/* ---------- Tono por categoría ---------- */
+.tarjeta { --tono: #6f9a4c; --tono-2: #a9c972; --tinte: #eef5e0; }
+.tarjeta:has(.ave)     { --tono: #c27f35; --tono-2: #ecc067; --tinte: #fbf1df; }
+.tarjeta:has(.reptil)  { --tono: #2f7a5c; --tono-2: #79b98a; --tinte: #e3f3ea; }
+.tarjeta:has(.anfibio) { --tono: #23707c; --tono-2: #6fb5ad; --tinte: #e0f2f0; }
+.tarjeta:has(.flora)   { --tono: #557f2c; --tono-2: #a6cc5f; --tinte: #eef6dc; }
+
+/* ---------- Contenedor con borde degradado animado ---------- */
+.tarjeta {
+  counter-increment: registro;
+  position: relative;
+  border: 1.5px solid transparent;
+  border-radius: 24px;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    conic-gradient(from var(--giro), var(--linea), var(--linea) 40%, var(--tono-2), var(--tono), var(--linea) 75%) border-box;
+  box-shadow: 0 2px 4px #173d3206, 0 18px 40px -26px #173d3240;
+  transition:
+    transform .6s var(--ease-suave), box-shadow .6s var(--ease-suave),
+    opacity .7s, translate .8s var(--ease-suave), --giro 1.6s var(--ease-suave);
+}
+.tarjeta:hover {
+  --giro: 300deg;
+  box-shadow: 0 2px 4px #173d3206, 0 36px 60px -32px color-mix(in srgb, var(--tono) 70%, transparent);
+}
+
+/* ---------- Portada ---------- */
+.tarjeta-portada {
+  height: 230px; margin: 8px 8px 0; border-radius: 18px 18px 0 0;
+  background: linear-gradient(140deg, var(--tono), var(--tono-2));
+  color: #ffffffe6;
+}
+.tarjeta-portada.ave, .tarjeta-portada.reptil, .tarjeta-portada.anfibio, .tarjeta-portada.flora {
+  background: linear-gradient(140deg, var(--tono), var(--tono-2));
+}
+.portada-ilustrada {
+  position: relative; padding-bottom: 26px;
+  background-image: url("/images/patron-hojas.svg"); background-size: 180px; background-blend-mode: soft-light;
+  transition: background-position 1.2s var(--ease-suave);
+}
+.tarjeta:hover .portada-ilustrada { background-position: 40px -30px; }
+.portada-ilustrada::before {
+  content: ""; position: absolute; width: 150px; height: 150px; left: 50%; top: 44%;
+  translate: -50% -50%; border-radius: 50%;
+  background: radial-gradient(circle, #ffffff40, #ffffff00 68%);
+  transition: scale .8s var(--ease-rebote);
+}
+.tarjeta:hover .portada-ilustrada::before { scale: 1.35; }
+.animal-icon { width: 128px; height: 102px; stroke-width: 1.3; color: #fff; filter: drop-shadow(0 6px 10px #0000002a); }
+.tarjeta:hover .animal-icon { transform: scale(1.12) translateY(-6px) rotate(-4deg); }
+.portada-ilustrada > span {
+  font-size: 8px; letter-spacing: 2px; text-transform: uppercase; opacity: .85; color: #fff;
+  transform: translateY(6px); transition: transform .5s var(--ease-suave), letter-spacing .5s;
+}
+.tarjeta:hover .portada-ilustrada > span { transform: none; letter-spacing: 3px; }
+.foto-avistamiento { transition: transform 1.4s var(--ease-suave), filter .6s; }
+.tarjeta:hover .foto-avistamiento { transform: scale(1.08); }
+
+/* Anillos decorativos */
+.tarjeta-portada::before {
+  content: ""; position: absolute; z-index: 1; width: 220px; height: 220px; right: -90px; top: -110px;
+  border-radius: 50%; border: 1px dashed #ffffff80; box-shadow: 0 0 0 26px #ffffff12, 0 0 0 52px #ffffff0a;
+  animation: girar 40s linear infinite; pointer-events: none;
+}
+/* Número de registro */
+.tarjeta-portada::after {
+  content: "Nº " counter(registro, decimal-leading-zero);
+  position: absolute; z-index: 2; left: 16px; bottom: 34px;
+  font: italic 13px/1 var(--serif); color: #ffffffd9; letter-spacing: .5px;
+  transition: transform .5s var(--ease-suave);
+}
+.tarjeta:hover .tarjeta-portada::after { transform: translateX(4px); }
+
+/* Ola inferior que se desplaza */
+.portada-ola {
+  position: absolute; z-index: 2; left: 0; bottom: -1px; width: 200%; height: 34px; fill: #fff;
+  transition: transform 1.4s var(--ease-suave);
+}
+.tarjeta:hover .portada-ola { transform: translateX(-25%); }
+
+/* Etiquetas de vidrio */
+.categoria, .estado {
+  z-index: 3; backdrop-filter: blur(8px) saturate(1.3);
+  transition: transform .45s var(--ease-rebote), background .3s;
+}
+.categoria { top: 16px; left: 16px; background: #ffffff2e; color: #fff; border: 1px solid #ffffff55; padding: 6px 12px; }
+.estado { top: 16px; right: 16px; bottom: auto; background: #ffffffe8; box-shadow: 0 4px 14px #0000001a; }
+.tarjeta:hover .categoria { transform: translateY(-2px); background: #ffffff45; }
+.tarjeta:hover .estado { transform: translateY(-2px) scale(1.05); }
+
+/* ---------- Cuerpo ---------- */
+.tarjeta-cuerpo { position: relative; padding: 6px 24px 0; }
+.tarjeta-sello {
+  position: absolute; z-index: 4; right: 22px; top: -30px;
+  display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%;
+  background: #fff; color: var(--tono);
+  box-shadow: 0 0 0 5px #fff, 0 10px 24px -8px color-mix(in srgb, var(--tono) 70%, transparent);
+  transition: transform .8s var(--ease-rebote), background .4s, color .4s;
+}
+.tarjeta-sello .icon { width: 34px; height: 28px; stroke-width: 4; }
+.tarjeta:hover .tarjeta-sello { transform: rotate(360deg) scale(1.08); background: var(--tono); color: #fff; }
+
+.tarjeta-fecha { margin: 4px 70px 12px 0; font-size: 9px; }
+.tiene-punto {
+  margin-left: 0; padding: 3px 8px; border-radius: 20px;
+  background: var(--tinte); color: var(--tono); font-size: 8px; font-weight: 600;
+}
+.tarjeta h3 {
+  align-self: flex-start; font-size: 27px;
+  background: linear-gradient(var(--tono-2), var(--tono-2)) no-repeat 0 92% / 0% 6px;
+  transition: background-size .7s var(--ease-suave);
+}
+.tarjeta:hover h3 { background-size: 100% 6px; }
+.cientifico {
+  align-self: flex-start; margin: 10px 0 14px; padding: 3px 10px; border-radius: 20px;
+  background: #f5f7f0; color: #7f8975; font-family: var(--serif); font-size: 12px;
+  transition: background .4s, color .4s;
+}
+.tarjeta:hover .cientifico { background: var(--tinte); color: var(--tono); }
+.tarjeta-zona { font-size: 11px; margin-bottom: 14px; transition: transform .4s var(--ease-suave); }
+.tarjeta-zona .icon { color: var(--tono); }
+.tarjeta:hover .tarjeta-zona { transform: translateX(4px); }
+
+/* Medidor de riesgo */
+.medidor {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 16px; padding: 10px 12px; border-radius: 12px; background: #f7f8f3;
+  font-size: 8px; letter-spacing: 1.2px; text-transform: uppercase; color: #8d9584; font-weight: 650;
+}
+.medidor-barras { display: flex; gap: 4px; flex: 1; max-width: 130px; }
+.medidor-barras i {
+  flex: 1; height: 6px; border-radius: 6px; background: #e3e8da; position: relative; overflow: hidden;
+}
+.medidor-barras i::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--nivel, #7fae55);
+  transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease-suave);
+}
+.medidor.menor { --nivel: #7fae55; }
+.medidor.vulnerable { --nivel: #e0a03f; }
+.medidor.peligro { --nivel: #d4644a; }
+.aparecida .medidor-barras i:nth-child(1)::after,
+.aparecida .medidor.vulnerable .medidor-barras i:nth-child(2)::after,
+.aparecida .medidor.peligro .medidor-barras i:nth-child(-n+3)::after { transform: scaleX(1); }
+.aparecida .medidor-barras i:nth-child(1)::after { transition-delay: .5s; }
+.aparecida .medidor-barras i:nth-child(2)::after { transition-delay: .7s; }
+.aparecida .medidor-barras i:nth-child(3)::after { transition-delay: .9s; }
+html:not(.js) .medidor-barras i:nth-child(1)::after,
+html:not(.js) .medidor.vulnerable .medidor-barras i:nth-child(2)::after,
+html:not(.js) .medidor.peligro .medidor-barras i::after { transform: scaleX(1); }
+.medidor.peligro .medidor-barras i:nth-child(3)::after { animation: parpadeo 1.6s ease-in-out 1.6s infinite; }
+
+/* Autor */
+.autor { border-top: 1px dashed #e4e9dc; padding: 14px 0; font-size: 10px; }
+.avatar {
+  width: 34px; height: 34px; color: #fff; font-family: var(--serif); font-size: 14px;
+  background: linear-gradient(140deg, var(--tono), var(--tono-2));
+  box-shadow: 0 4px 10px -4px var(--tono);
+}
+.autor .ver-ubicacion { background: var(--tinte); color: var(--tono); border-radius: 50%; width: 36px; height: 36px; }
+.autor .ver-ubicacion:hover { background: var(--tono); color: #fff; transform: scale(1.1); }
+
+/* Acciones */
+.acciones { border-top: 0; padding: 0 0 18px; gap: 10px; }
+.editar {
+  position: relative; overflow: hidden; isolation: isolate; flex: 1; justify-content: center;
+  padding: 11px 14px; border-radius: 12px; font-size: 10px; color: var(--tono);
+  background: var(--tinte); transition: color .4s;
+}
+.editar::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
+  background: linear-gradient(120deg, var(--tono), var(--tono-2));
+  transform: translateX(-101%); transition: transform .5s var(--ease-suave);
+}
+.editar:hover { color: #fff; }
+.editar:hover::before { transform: none; }
+.editar:focus-visible { outline-offset: 2px; }
+.eliminar { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: #fbf3ee; }
+
+/* ---------- Transiciones al filtrar / buscar / cambiar vista ---------- */
+.tarjeta.reentrar { animation: reentrar .55s var(--ease-rebote) both; animation-delay: var(--retraso, 0s); }
+@keyframes reentrar { from { opacity: 0; transform: translateY(18px) scale(.94); filter: blur(4px); } }
+.lista-entrando { animation: lista-in .5s var(--ease-suave) both; }
+@keyframes lista-in { from { opacity: 0; transform: translateY(14px); } }
+#sin-resultados:not([hidden]) { animation: aparecer-pop .5s var(--ease-rebote) both; }
+
+@media (max-width: 560px) {
+  .tarjeta-portada { height: 200px; }
+  .tarjeta-cuerpo { padding-inline: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .medidor-barras i::after { transform: scaleX(0); }
+  .medidor-barras i:nth-child(1)::after,
+  .medidor.vulnerable .medidor-barras i:nth-child(2)::after,
+  .medidor.peligro .medidor-barras i::after { transform: scaleX(1); }
+}

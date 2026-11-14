@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#173d32">
+<meta name="description" content="Descubre, registra y protege la biodiversidad del Piedemonte Amazónico.">
+<title>{{titulo}} · BioCaquetá</title><link rel="icon" href="/images/hoja.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/vendor/leaflet/leaflet.css"><link rel="stylesheet" href="/css/styles.css"><link rel="stylesheet" href="/css/animaciones.css"><link rel="stylesheet" href="/css/tarjetas.css"><link rel="stylesheet" href="/css/estructura.css">
+<script src="/vendor/leaflet/leaflet.js" defer></script><script src="/js/app.js" defer></script><script src="/js/rest.js" defer></script><script src="/js/efectos.js" defer></script><script src="/js/interaccion.js" defer></script>
+</head><body>
+<div class="progreso-scroll" aria-hidden="true"><span></span></div>
+<div class="fondo-organico" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+<svg class="hoja-flotante f1" viewBox="0 0 24 24"><use href="/images/iconos.svg#leaf"/></svg><svg class="hoja-flotante f2" viewBox="0 0 24 24"><use href="/images/iconos.svg#leaf"/></svg><svg class="hoja-flotante f3" viewBox="0 0 24 24"><use href="/images/iconos.svg#leaf"/></svg><svg class="hoja-flotante f4" viewBox="0 0 24 24"><use href="/images/iconos.svg#leaf"/></svg></div>
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+<header class="cabecera"><nav class="nav contenedor" aria-label="Navegación principal">
+<a class="marca" href="/" aria-label="BioCaquetá, inicio"><span class="marca-icono"><svg class="icon"><use href="/images/iconos.svg#leaf"/></svg></span><span>Bio<span class="marca-ligera">Caquetá</span><small>UN TERRITORIO LLENO DE VIDA</small></span></a>
+<div class="nav-links"><a href="/#explorar">Explorar</a><a href="/#registrar">Cuaderno de campo</a><span class="nav-lugar"><span class="punto-vivo"></span> Piedemonte Amazónico</span></div>
+<a class="boton boton-nav" href="/#registrar">Nuevo avistamiento <svg class="icon"><use href="/images/iconos.svg#plus"/></svg></a>
+</nav></header>
+<main id="contenido" class="contenedor">{{{body}}}</main>
+<div class="ola-pie" aria-hidden="true"><svg viewBox="0 0 1440 90" preserveAspectRatio="none"><path class="ola o1" d="M0 50 C 240 10 480 90 720 50 S 1200 10 1440 50 V90 H0Z"/><path class="ola o2" d="M0 60 C 240 95 480 25 720 60 S 1200 95 1440 60 V90 H0Z"/></svg></div>
+<footer class="contenedor pie"><a class="marca-pie" href="/">BioCaquetá<span>Observar es el primer paso para conservar.</span></a><span>Ingeniería de Sistemas<br>Universidad de la Amazonia · Florencia, Caquetá</span><a href="/#contenido" class="volver-arriba" aria-label="Volver arriba"><svg class="icon"><use href="/images/iconos.svg#arrow-up"/></svg></a></footer>
+<button type="button" id="abrir-solicitudes" class="solicitudes-toggle" aria-haspopup="dialog" aria-controls="solicitudes-panel" aria-expanded="false"><svg class="icon"><use href="/images/iconos.svg#activity"/></svg><span>Solicitudes</span><span class="toggle-punto" aria-hidden="true"></span></button>
+<dialog id="solicitudes-panel" class="drawer" aria-labelledby="titulo-solicitudes">
+<div class="drawer-cabecera"><div><span class="etiqueta">DETRÁS DE CADA OBSERVACIÓN</span><h2 id="titulo-solicitudes">Solicitudes API<span>.</span></h2></div><button type="button" class="boton-icono" data-close-dialog aria-label="Cerrar solicitudes"><svg class="icon"><use href="/images/iconos.svg#close"/></svg></button></div>
+<p class="drawer-descripcion">Consulta las operaciones de la web y de Postman, con su estado y tiempo de respuesta.</p>
+<div class="monitor-estado"><span class="punto-vivo"></span><span id="monitor-status" role="status">Actividad de esta sesión del servidor</span><button type="button" id="actualizar-solicitudes" class="boton-texto">Actualizar <svg class="icon"><use href="/images/iconos.svg#refresh"/></svg></button></div>
+<div class="monitor-filtros"><label for="filtro-solicitudes">Mostrar</label><select id="filtro-solicitudes"><option value="todas">Todas las solicitudes</option><option value="errores">Solo errores</option><option value="GET">GET · Consultas</option><option value="POST">POST · Formularios y registros</option><option value="PUT">PUT · Actualizaciones</option><option value="DELETE">DELETE · Eliminaciones</option></select><span id="conteo-solicitudes">0</span></div>
+<div id="lista-solicitudes" class="lista-solicitudes" aria-live="polite"></div><div class="drawer-pie"><svg class="icon"><use href="/images/iconos.svg#code"/></svg> Últimas 50 operaciones · Se reinicia al cerrar el servidor</div>
+</dialog>
+<dialog id="confirmar-eliminacion" class="modal" aria-labelledby="titulo-eliminar"><div class="modal-icono"><svg class="icon"><use href="/images/iconos.svg#trash"/></svg></div><h2 id="titulo-eliminar">¿Eliminar este avistamiento?</h2><p id="detalle-eliminar"></p><p>El registro y su foto se eliminarán de la base de datos.</p><form method="dialog" class="acciones-dialogo"><button class="boton secundario" value="cancelar">Conservar registro</button><button class="boton peligro-boton" value="eliminar">Sí, eliminar</button></form></dialog>
+<dialog id="ubicacion-modal" class="modal modal-mapa" aria-labelledby="titulo-ubicacion"><div class="encabezado-modal"><div><span class="etiqueta">UN PUNTO LLENO DE VIDA</span><h2 id="titulo-ubicacion">Ubicación del avistamiento</h2></div><button type="button" class="boton-icono" data-close-dialog aria-label="Cerrar mapa"><svg class="icon"><use href="/images/iconos.svg#close"/></svg></button></div><div id="mapa-detalle" class="mapa-detalle"></div><p id="coordenadas-detalle" class="nota"></p><a id="maps-detalle" class="boton secundario" target="_blank" rel="noopener noreferrer">Abrir en Google Maps <svg class="icon"><use href="/images/iconos.svg#arrow"/></svg></a></dialog>
+<div id="toast" class="toast" role="status" hidden></div>
+</body></html>
